@@ -39,6 +39,55 @@
         "sessionExpiry": ""
     },
     {
+        "id": "703d38e15df49843",
+        "type": "mongodb4-client",
+        "name": "",
+        "protocol": "mongodb",
+        "hostname": "mongo",
+        "port": "27017",
+        "dbName": "sensores",
+        "appName": "",
+        "authSource": "",
+        "authMechanism": "DEFAULT",
+        "tls": false,
+        "tlsCAFile": "",
+        "tlsCertificateKeyFile": "",
+        "tlsInsecure": false,
+        "connectTimeoutMS": "30000",
+        "socketTimeoutMS": "0",
+        "minPoolSize": "0",
+        "maxPoolSize": "100",
+        "maxIdleTimeMS": "0",
+        "uri": "",
+        "advanced": "{}",
+        "uriTabActive": "tab-uri-simple"
+    },
+    {
+        "id": "478839626001f564",
+        "type": "postgreSQLConfig",
+        "name": "",
+        "host": "postgres",
+        "hostFieldType": "str",
+        "port": 5432,
+        "portFieldType": "num",
+        "database": "iot",
+        "databaseFieldType": "str",
+        "ssl": "false",
+        "sslFieldType": "bool",
+        "applicationName": "",
+        "applicationNameType": "str",
+        "max": 10,
+        "maxFieldType": "num",
+        "idle": 1000,
+        "idleFieldType": "num",
+        "connectionTimeout": 10000,
+        "connectionTimeoutFieldType": "num",
+        "user": "admin",
+        "userFieldType": "str",
+        "password": "admin",
+        "passwordFieldType": "str"
+    },
+    {
         "id": "f46069a72f09219d",
         "type": "debug",
         "z": "795b11739946d75d",
@@ -51,8 +100,8 @@
         "targetType": "full",
         "statusVal": "",
         "statusType": "auto",
-        "x": 1060,
-        "y": 780,
+        "x": 1420,
+        "y": 740,
         "wires": []
     },
     {
@@ -60,18 +109,20 @@
         "type": "function",
         "z": "795b11739946d75d",
         "name": "function 1",
-        "func": "var obj ={} \n\nobj.id = msg.id;\nobj.createAt = new Date();\nobj.message = {};\nobj.message.temperature = msg.payload.t;\nobj.message.humidity = msg.payload.umid;\nobj.message.topic = msg.topic;\n\nmsg = obj;\n\nreturn msg;",
+        "func": "var obj ={} \n\nobj._id = msg.id;\nobj.createAt = new Date();\nobj.temperature = msg.payload.t;\nobj.humidity = msg.payload.umid;\nobj.topic = msg.topic;\n\nmsg = {};\nmsg.payload = obj;\n\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 840,
-        "y": 760,
+        "x": 1100,
+        "y": 740,
         "wires": [
             [
-                "f46069a72f09219d"
+                "f46069a72f09219d",
+                "05e062dfdc49cffe",
+                "afccd71bf65936cd"
             ]
         ]
     },
@@ -86,7 +137,7 @@
         "name": "",
         "field": "id",
         "fieldType": "msg",
-        "x": 630,
+        "x": 930,
         "y": 720,
         "wires": [
             [
@@ -107,11 +158,65 @@
         "rap": true,
         "rh": 0,
         "inputs": 0,
-        "x": 390,
-        "y": 680,
+        "x": 750,
+        "y": 660,
         "wires": [
             [
                 "9210aa39e7b28cc3"
+            ]
+        ]
+    },
+    {
+        "id": "05e062dfdc49cffe",
+        "type": "mongodb4",
+        "z": "795b11739946d75d",
+        "clientNode": "703d38e15df49843",
+        "mode": "collection",
+        "collection": "sensor",
+        "operation": "insertOne",
+        "output": "toArray",
+        "maxTimeMS": "0",
+        "handleDocId": false,
+        "name": "",
+        "x": 1420,
+        "y": 800,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "509ed8836a8adc12",
+        "type": "postgresql",
+        "z": "795b11739946d75d",
+        "name": "",
+        "query": "",
+        "postgreSQLConfig": "478839626001f564",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 1510,
+        "y": 860,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "afccd71bf65936cd",
+        "type": "function",
+        "z": "795b11739946d75d",
+        "name": "function 2",
+        "func": "var objeto = {};\n\nobjeto.query = `INSERT INTO sensores (id,createdAt,temperature,humidity,topic) VALUES ($1,$2,$3,$4,$5)`;\nobjeto.params = [\n    msg.payload._id,\n    msg.payload.createAt,\n    msg.payload.temperature,\n    msg.payload.humidity,\n    msg.payload.topic\n]\n\nmsg = {}\nmsg = objeto;\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1320,
+        "y": 860,
+        "wires": [
+            [
+                "509ed8836a8adc12"
             ]
         ]
     }

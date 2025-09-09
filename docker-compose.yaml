@@ -32,17 +32,32 @@ services:
     restart: unless-stopped
 
   mongo:
-    image: mongo:7
+    image: mongo:latest
     container_name: mongo
     environment:
       - MONGO_INITDB_ROOT_USERNAME=admin
       - MONGO_INITDB_ROOT_PASSWORD=admin
     ports:
-      - "27017:27017"
+      - "27018:27017"
     volumes:
       - ./mongo/init:/docker-entrypoint-initdb.d:ro
       - ./mongo_data:/data/db
     restart: unless-stopped
+  
+  postgres: 
+    image: postgres:latest
+    container_name: postgres
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=iot
+      - TZ=America/Sao_Paulo
+    ports:
+      - "5435:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    restart: unless-stopped
 
 volumes:
   mongo_data:
+  pg_data:
