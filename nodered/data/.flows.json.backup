@@ -88,69 +88,11 @@
         "passwordFieldType": "str"
     },
     {
-        "id": "f46069a72f09219d",
-        "type": "debug",
-        "z": "795b11739946d75d",
-        "name": "debug 1",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "true",
-        "targetType": "full",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 1420,
-        "y": 740,
-        "wires": []
-    },
-    {
-        "id": "992763118fefe62d",
-        "type": "function",
-        "z": "795b11739946d75d",
-        "name": "function 1",
-        "func": "var obj ={} \n\nobj._id = msg.id;\nobj.createAt = new Date();\nobj.temperature = msg.payload.t;\nobj.humidity = msg.payload.umid;\nobj.topic = msg.topic;\n\nmsg = {};\nmsg.payload = obj;\n\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 1140,
-        "y": 740,
-        "wires": [
-            [
-                "f46069a72f09219d",
-                "05e062dfdc49cffe",
-                "509ed8836a8adc12"
-            ]
-        ]
-    },
-    {
-        "id": "9210aa39e7b28cc3",
-        "type": "uuid",
-        "z": "795b11739946d75d",
-        "uuidVersion": "v4",
-        "namespaceType": "",
-        "namespace": "",
-        "namespaceCustom": "",
-        "name": "",
-        "field": "id",
-        "fieldType": "msg",
-        "x": 970,
-        "y": 720,
-        "wires": [
-            [
-                "992763118fefe62d"
-            ]
-        ]
-    },
-    {
         "id": "719d69dd2f874f6c",
         "type": "mqtt in",
         "z": "795b11739946d75d",
         "name": "",
-        "topic": "sensor/temperatura",
+        "topic": "sensor/#",
         "qos": "0",
         "datatype": "auto-detect",
         "broker": "ed2b9f62b8d123b0",
@@ -158,11 +100,11 @@
         "rap": true,
         "rh": 0,
         "inputs": 0,
-        "x": 750,
-        "y": 660,
+        "x": 800,
+        "y": 500,
         "wires": [
             [
-                "9210aa39e7b28cc3"
+                "956823a02386b8b0"
             ]
         ]
     },
@@ -172,14 +114,14 @@
         "z": "795b11739946d75d",
         "clientNode": "703d38e15df49843",
         "mode": "collection",
-        "collection": "sensor",
-        "operation": "insertOne",
+        "collection": "",
+        "operation": "",
         "output": "toArray",
         "maxTimeMS": "0",
         "handleDocId": false,
         "name": "",
-        "x": 1420,
-        "y": 800,
+        "x": 1450,
+        "y": 580,
         "wires": [
             []
         ]
@@ -189,15 +131,132 @@
         "type": "postgresql",
         "z": "795b11739946d75d",
         "name": "",
-        "query": "INSERT INTO sensores (id, createdAt, temperature, humidity, topic) VALUES ('123',' 2023-10-27 15:30:00',20.54,10.5,'Teste');",
+        "query": "",
         "postgreSQLConfig": "478839626001f564",
         "split": false,
         "rowsPerMsg": 1,
         "outputs": 1,
-        "x": 1430,
-        "y": 860,
+        "x": 1310,
+        "y": 300,
         "wires": [
             []
         ]
+    },
+    {
+        "id": "5ed11b66429306c5",
+        "type": "mqtt in",
+        "z": "795b11739946d75d",
+        "name": "",
+        "topic": "devices/#",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "ed2b9f62b8d123b0",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 800,
+        "y": 660,
+        "wires": [
+            [
+                "33ac01a637950d8a"
+            ]
+        ]
+    },
+    {
+        "id": "8f0ac6c6143da746",
+        "type": "function",
+        "z": "795b11739946d75d",
+        "name": "ProcessDataDevice",
+        "func": "var message = {};\nmessage.payload = msg.payload;\nmessage.payload.created_at = new Date();\nmessage.operation = \"insertOne\";\nmessage.collection = \"devices\";\nmsg = {};\nmsg = message;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1210,
+        "y": 660,
+        "wires": [
+            [
+                "05e062dfdc49cffe"
+            ]
+        ]
+    },
+    {
+        "id": "33ac01a637950d8a",
+        "type": "uuid",
+        "z": "795b11739946d75d",
+        "uuidVersion": "v4",
+        "namespaceType": "",
+        "namespace": "",
+        "namespaceCustom": "",
+        "name": "",
+        "field": "payload._id",
+        "fieldType": "msg",
+        "x": 990,
+        "y": 660,
+        "wires": [
+            [
+                "8f0ac6c6143da746"
+            ]
+        ]
+    },
+    {
+        "id": "07b86a6d622a5e5f",
+        "type": "function",
+        "z": "795b11739946d75d",
+        "name": "ProcessDataReading",
+        "func": "var message = {}\nmessage.payload = msg.payload;\nmessage.payload.topic = msg.topic;\nmessage.payload.createdAt = new Date();\n\nmessage.operation = \"insertOne\";\nmessage.collection = \"reading_data\";\n\nmsg = {};\nmsg = message;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1200,
+        "y": 500,
+        "wires": [
+            [
+                "d16a5db408250813",
+                "05e062dfdc49cffe"
+            ]
+        ]
+    },
+    {
+        "id": "956823a02386b8b0",
+        "type": "uuid",
+        "z": "795b11739946d75d",
+        "uuidVersion": "v4",
+        "namespaceType": "",
+        "namespace": "",
+        "namespaceCustom": "",
+        "name": "",
+        "field": "payload._id",
+        "fieldType": "msg",
+        "x": 970,
+        "y": 500,
+        "wires": [
+            [
+                "07b86a6d622a5e5f"
+            ]
+        ]
+    },
+    {
+        "id": "d16a5db408250813",
+        "type": "debug",
+        "z": "795b11739946d75d",
+        "name": "debug 2",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1440,
+        "y": 420,
+        "wires": []
     }
 ]
