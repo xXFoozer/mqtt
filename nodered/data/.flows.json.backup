@@ -100,8 +100,8 @@
         "rap": true,
         "rh": 0,
         "inputs": 0,
-        "x": 800,
-        "y": 500,
+        "x": 860,
+        "y": 540,
         "wires": [
             [
                 "956823a02386b8b0"
@@ -120,7 +120,7 @@
         "maxTimeMS": "0",
         "handleDocId": false,
         "name": "",
-        "x": 1450,
+        "x": 1410,
         "y": 580,
         "wires": [
             []
@@ -136,31 +136,10 @@
         "split": false,
         "rowsPerMsg": 1,
         "outputs": 1,
-        "x": 1310,
-        "y": 300,
+        "x": 970,
+        "y": 420,
         "wires": [
             []
-        ]
-    },
-    {
-        "id": "5ed11b66429306c5",
-        "type": "mqtt in",
-        "z": "795b11739946d75d",
-        "name": "",
-        "topic": "devices/#",
-        "qos": "2",
-        "datatype": "auto-detect",
-        "broker": "ed2b9f62b8d123b0",
-        "nl": false,
-        "rap": true,
-        "rh": 0,
-        "inputs": 0,
-        "x": 800,
-        "y": 660,
-        "wires": [
-            [
-                "33ac01a637950d8a"
-            ]
         ]
     },
     {
@@ -175,8 +154,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1210,
-        "y": 660,
+        "x": 1170,
+        "y": 620,
         "wires": [
             [
                 "05e062dfdc49cffe"
@@ -195,7 +174,7 @@
         "field": "payload._id",
         "fieldType": "msg",
         "x": 990,
-        "y": 660,
+        "y": 620,
         "wires": [
             [
                 "8f0ac6c6143da746"
@@ -214,12 +193,12 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1200,
-        "y": 500,
+        "x": 1160,
+        "y": 540,
         "wires": [
             [
-                "d16a5db408250813",
-                "05e062dfdc49cffe"
+                "05e062dfdc49cffe",
+                "978f0a57da632fa7"
             ]
         ]
     },
@@ -234,8 +213,8 @@
         "name": "",
         "field": "payload._id",
         "fieldType": "msg",
-        "x": 970,
-        "y": 500,
+        "x": 990,
+        "y": 540,
         "wires": [
             [
                 "07b86a6d622a5e5f"
@@ -243,10 +222,74 @@
         ]
     },
     {
-        "id": "d16a5db408250813",
+        "id": "e89772f4e7f36bf3",
+        "type": "mqtt out",
+        "z": "795b11739946d75d",
+        "name": "",
+        "topic": "",
+        "qos": "0",
+        "retain": "false",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "ed2b9f62b8d123b0",
+        "x": 1790,
+        "y": 620,
+        "wires": []
+    },
+    {
+        "id": "5ed11b66429306c5",
+        "type": "mqtt in",
+        "z": "795b11739946d75d",
+        "name": "",
+        "topic": "devices/#",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "ed2b9f62b8d123b0",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 860,
+        "y": 620,
+        "wires": [
+            [
+                "33ac01a637950d8a"
+            ]
+        ]
+    },
+    {
+        "id": "978f0a57da632fa7",
+        "type": "switch",
+        "z": "795b11739946d75d",
+        "name": "",
+        "property": "payload.data",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "gte",
+                "v": "30",
+                "vt": "num"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 1410,
+        "y": 500,
+        "wires": [
+            [
+                "edaa5027b9e9e93b"
+            ]
+        ]
+    },
+    {
+        "id": "81f3a2f0b8a74672",
         "type": "debug",
         "z": "795b11739946d75d",
-        "name": "debug 2",
+        "name": "debug 1",
         "active": true,
         "tosidebar": true,
         "console": false,
@@ -255,8 +298,29 @@
         "targetType": "full",
         "statusVal": "",
         "statusType": "auto",
-        "x": 1440,
-        "y": 420,
+        "x": 1800,
+        "y": 500,
         "wires": []
+    },
+    {
+        "id": "edaa5027b9e9e93b",
+        "type": "function",
+        "z": "795b11739946d75d",
+        "name": "function 1",
+        "func": "var command = {\n    payload: {\n        power_on: true,\n        actuador: \"MOTOR V8 CC\"\n       \n    },\n    topic: `/devices/${msg.payload.device_id}/cmd/motor`\n};\nreturn command;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1620,
+        "y": 560,
+        "wires": [
+            [
+                "e89772f4e7f36bf3",
+                "81f3a2f0b8a74672"
+            ]
+        ]
     }
 ]
